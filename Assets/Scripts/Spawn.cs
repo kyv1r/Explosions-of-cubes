@@ -6,6 +6,7 @@ using UnityEngine;
 public class Spawn : MonoBehaviour
 {
     [SerializeField] private Fuse _fuse;
+    [SerializeField] private List<GameObject> newObjects;
 
     private static int _maxChance = 100;
 
@@ -21,6 +22,15 @@ public class Spawn : MonoBehaviour
 
     private void Create()
     {
+        foreach (var newGameObject in GetNewObjects())
+            Instantiate(newGameObject);
+
+    }
+
+    public List<GameObject> GetNewObjects()
+    {
+        newObjects.Clear();
+
         int _lowCountCubes = 2;
         int _highCountCubes = 6;
 
@@ -33,10 +43,24 @@ public class Spawn : MonoBehaviour
 
             for (int i = 0; i < countCubes; i++)
             {
-                Instantiate(newObject);
-                Debug.Log("Выпало " + countCubes + " куба");
+                newObjects.Add(newObject);
+                Debug.Log("Выпало " + countCubes + " кубов");
             }
         }
+
+        return newObjects;
+    }
+
+    public List<Collider> GetCollidersObjects()
+    {
+        List<Collider> collisionsGameObjects = new();
+
+        foreach (var newGameObject in GetNewObjects())
+        {
+            collisionsGameObjects.Add(newGameObject.GetComponent<Collider>());
+        }
+
+        return collisionsGameObjects;
     }
 
     private void Resize(GameObject gameObject)

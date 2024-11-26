@@ -5,17 +5,16 @@ using UnityEngine;
 
 public class Fuse : MonoBehaviour
 {
-    [SerializeField] private float _explosionRadius; 
+    [SerializeField] private float _explosionRadius;
     [SerializeField] private float _explosionForce;
-    [SerializeField] private ParticleSystem _explosionEffect;
+    [SerializeField] private Spawn _spawn;
 
     public event Action IsDestroyed;
 
     private void OnMouseUpAsButton()
     {
-        Explode();
-        Instantiate(_explosionEffect, transform.position, transform.rotation);
         IsDestroyed?.Invoke();
+        Explode();
         Destroy(gameObject);
     }
 
@@ -27,9 +26,14 @@ public class Fuse : MonoBehaviour
 
     private List<Rigidbody> GetExplodableObjects()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, _explosionRadius);
+        List<Collider> hits = _spawn.GetCollidersObjects();
 
         List<Rigidbody> cubes = new();
+
+        if (hits == null)
+        {
+            return null;
+        }
 
         foreach (Collider hit in hits)
         {
