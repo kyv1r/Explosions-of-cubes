@@ -122,6 +122,25 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &6705555 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5505797178247572366, guid: bcc5cca85366f444786aafd7004a1387, type: 3}
+  m_PrefabInstance: {fileID: 7127248860195177151}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6705563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6705555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b87bf07468ba884b806f8ae14fc4116, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _explosionForce: 20
+  _explosionRadius: 500
 --- !u!1 &102532925
 GameObject:
   m_ObjectHideFlags: 0
@@ -520,6 +539,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 27.28, y: 0, z: 0}
+--- !u!1 &1336650042
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1336650043}
+  m_Layer: 0
+  m_Name: Fuze
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1336650043
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1336650042}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.7324283, y: -6.261139, z: 15.299899}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2024015892
 GameObject:
   m_ObjectHideFlags: 0
@@ -581,6 +631,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3478011816627057807, guid: bcc5cca85366f444786aafd7004a1387, type: 3}
+      propertyPath: _fuse
+      value: 
+      objectReference: {fileID: 6705563}
     - target: {fileID: 5505797178247572366, guid: bcc5cca85366f444786aafd7004a1387, type: 3}
       propertyPath: m_Name
       value: Cube
@@ -628,7 +682,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5505797178247572366, guid: bcc5cca85366f444786aafd7004a1387, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6705563}
   m_SourcePrefab: {fileID: 100100000, guid: bcc5cca85366f444786aafd7004a1387, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
@@ -641,3 +698,4 @@ SceneRoots:
   - {fileID: 2024015894}
   - {fileID: 683204594}
   - {fileID: 102532927}
+  - {fileID: 1336650043}

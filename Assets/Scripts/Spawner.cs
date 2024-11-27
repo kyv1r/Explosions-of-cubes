@@ -7,18 +7,14 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    private static float s_maxChance = 200;
-
     [SerializeField] private Cube _initialCube;
+    [SerializeField] private Fuse _fuse;
 
     public event Action Created;
 
-    protected List<Rigidbody> _newCubes;
-
-    private Renderer _cubeRenderer;
-
     private void OnEnable()
     {
+        _initialCube.Initialize(100);
         _initialCube.Clicked += Create;
     }
 
@@ -33,42 +29,29 @@ public class Spawner : MonoBehaviour
         float maxCubeCount = 6;
         float currentCubes = UnityEngine.Random.Range(minCubeCount, maxCubeCount + 1);
 
-        _newCubes = new List<Rigidbody>();
+        List<Rigidbody> _newCubes = new List<Rigidbody>();
 
-        if (TryCreate())
+        if (_initialCube.TryCreate(out Cube newCube))
         {
-            Cube newCube = _initialCube;
             newCube.transform.localScale /= 2;
-            _cubeRenderer = newCube.CubeRenderer;
+            Renderer _cubeRenderer = newCube.Renderer;
 
             for (int i = 0; i < currentCubes; i++)
             {
-                _cubeRenderer.material = new Material(_cubeRenderer.material);
-                _cubeRenderer.material.color = GetRandomColor();
-                Instantiate(newCube);
-                _newCubes.Add(newCube.CubeRigidbody);
+                Cube spawnedCube = Instantiate(newCube, transform.position, Quaternion.identity);
+
+                float newChance = newCube.Chance / 2;
+                spawnedCube.Initialize(newChance);
+
+                Renderer cubeRenderer = spawnedCube.Renderer;
+                cubeRenderer.material = new Material(cubeRenderer.material);
+                cubeRenderer.material.color = GetRandomColor();
+
+                _newCubes.Add(spawnedCube.Rigidbody);
             }
 
             Created?.Invoke();
-        }
-    }
-
-    private bool TryCreate()
-    {
-        float lowChance = 0;
-        float highChance = 100;
-        float chance = UnityEngine.Random.Range(lowChance, highChance);
-
-        if (chance > s_maxChance)
-        {
-            Debug.Log($"Выпало {chance} из {s_maxChance}: Неповезло");
-            return false;
-        }
-        else
-        {
-            s_maxChance /= 2;
-            Debug.Log($"Выпало {chance} из {s_maxChance}: Повезло");
-            return true;
+            _fuse.Initialize(_newCubes);
         }
     }
 
