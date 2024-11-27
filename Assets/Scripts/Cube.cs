@@ -1,17 +1,23 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-[RequireComponent(typeof(Rigidbody))]
-
+[RequireComponent(typeof(Rigidbody), typeof(Renderer))]
 public class Cube : MonoBehaviour
 {
-    public event Action IsClicked;
+    public event Action Clicked;
 
-    private void OnMouseUpAsButton()
+    public Rigidbody CubeRigidbody { get; private set; }
+    public Renderer CubeRenderer { get; private set; }
+
+    private void Awake()
     {
-        IsClicked?.Invoke();
+        CubeRigidbody = GetComponent<Rigidbody>();
+        CubeRenderer = GetComponent<Renderer>();
+    }
+
+    private void OnMouseDown()
+    {
+        Clicked?.Invoke();
         Destroy(gameObject);
     }
 }

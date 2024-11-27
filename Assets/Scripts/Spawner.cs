@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -7,44 +7,31 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
+    private static float s_maxChance = 200;
+
     [SerializeField] private Cube _initialCube;
-    [SerializeField] private float _explosionForce;
-    [SerializeField] private float _explosionRadius;
 
-    private static float _maxChance = 200;
+    public event Action Created;
 
-    private List<Rigidbody> _newCubes;
-    private Renderer cubeRenderer;
+    protected List<Rigidbody> _newCubes;
+
+    private Renderer _cubeRenderer;
 
     private void OnEnable()
     {
-        _initialCube.IsClicked += Expload;
+        _initialCube.Clicked += Create;
     }
 
     private void OnDisable()
     {
-        _initialCube.IsClicked -= Expload;
-    }
-
-    private void Expload()
-    {
-        Create();
-
-        Debug.Log(_newCubes.Count);
-
-        foreach (Rigidbody cube in _newCubes)
-        {
-            cube.AddExplosionForce(_explosionForce, transform.position, _explosionRadius);
-        }
-
-        _newCubes.Clear();
+        _initialCube.Clicked -= Create;
     }
 
     public void Create()
     {
         float minCubeCount = 2;
         float maxCubeCount = 6;
-        float currentCubes = Random.Range(minCubeCount, maxCubeCount + 1);
+        float currentCubes = UnityEngine.Random.Range(minCubeCount, maxCubeCount + 1);
 
         _newCubes = new List<Rigidbody>();
 
@@ -52,15 +39,17 @@ public class Spawner : MonoBehaviour
         {
             Cube newCube = _initialCube;
             newCube.transform.localScale /= 2;
-            cubeRenderer = newCube.GetComponent<Renderer>();
+            _cubeRenderer = newCube.CubeRenderer;
 
             for (int i = 0; i < currentCubes; i++)
             {
-                cubeRenderer.material = new Material(cubeRenderer.material);
-                cubeRenderer.material.color = GetRandomColor();
+                _cubeRenderer.material = new Material(_cubeRenderer.material);
+                _cubeRenderer.material.color = GetRandomColor();
                 Instantiate(newCube);
-                _newCubes.Add(newCube.GetComponent<Rigidbody>());
+                _newCubes.Add(newCube.CubeRigidbody);
             }
+
+            Created?.Invoke();
         }
     }
 
@@ -68,26 +57,27 @@ public class Spawner : MonoBehaviour
     {
         float lowChance = 0;
         float highChance = 100;
-        float chance = Random.Range(lowChance, highChance);
+        float chance = UnityEngine.Random.Range(lowChance, highChance);
 
-        if (chance < _maxChance)
+        if (chance > s_maxChance)
         {
-            _maxChance /= 2;
-            Debug.Log($"Выпало {chance} из {_maxChance}: Повезло");
+            Debug.Log($"Выпало {chance} из {s_maxChance}: Неповезло");
+            return false;
+        }
+        else
+        {
+            s_maxChance /= 2;
+            Debug.Log($"Выпало {chance} из {s_maxChance}: Повезло");
             return true;
         }
-
-        Debug.Log($"Выпало {chance} из {_maxChance}: Неповезло");
-
-        return false;   
     }
 
     private Color GetRandomColor()
     {
         return new Color(
-            Random.Range(0f, 1f),
-            Random.Range(0f, 1f),
-            Random.Range(0f, 1f)
+            UnityEngine.Random.Range(0f, 1f),
+            UnityEngine.Random.Range(0f, 1f),
+            UnityEngine.Random.Range(0f, 1f)
         );
     }
 }
