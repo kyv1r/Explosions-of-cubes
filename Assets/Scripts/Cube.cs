@@ -32,12 +32,16 @@ public class Cube : MonoBehaviour
 
     public void CoordinateAction()
     {
-        List<Cube> newCubes = _spawner.Create(this);
+        if (TryCreate() == false)
+        {
+            _fuse.ExplodeCubes(this);
+            Destroy(gameObject);
+            return;
+        }
 
+        List<Cube> newCubes = _spawner.Create(this);
         _recolorer.PaintCubes(newCubes);
-        _fuse.ExplodeCubes(newCubes);
-        
-        Destroy(gameObject);        
+        Destroy(gameObject);
     }
 
     public void Initialize(float chance)
@@ -45,16 +49,14 @@ public class Cube : MonoBehaviour
         Chance = chance;
     }
 
-    public bool TryCreate()
+    private bool TryCreate()
     {
         float lowChance = 0;
         float highChance = 100;
         float chance = UnityEngine.Random.Range(lowChance, highChance);
 
         if (chance <= Chance)
-        {
             return true;
-        }
 
         return false;
     }

@@ -15,17 +15,14 @@ public class Spawner : MonoBehaviour
 
         float currentChance = cube.Chance;
 
-        if (cube.TryCreate())
-        {
-            cube.transform.localScale /= 2;
-            currentChance /= 2;
+        cube.transform.localScale /= 2;
+        currentChance /= 2;
 
-            for (int i = 0; i < currentCubes; i++)
-            {
-                Cube spawnedCube = Instantiate(cube, cube.transform.position, Quaternion.identity);
-                spawnedCube.Initialize(currentChance);
-                newCubes.Add(spawnedCube);
-            }
+        for (int i = 0; i < currentCubes; i++)
+        {
+            Cube spawnedCube = Instantiate(cube, cube.transform.position, Quaternion.identity);
+            spawnedCube.Initialize(currentChance);
+            newCubes.Add(spawnedCube);
         }
 
         return newCubes;
