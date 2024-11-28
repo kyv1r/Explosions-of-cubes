@@ -1,66 +1,33 @@
 using System.Collections.Generic;
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(Renderer))]
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] private Cube _initialCube;
-    [SerializeField] private Fuse _fuse;
-
-    public event Action Created;
-
-    private void OnEnable()
-    {
-        _initialCube.Initialize(100);
-        _initialCube.Clicked += Create;
-    }
-
-    private void OnDisable()
-    {
-        _initialCube.Clicked -= Create;
-    }
-
-    public void Create()
+    public List<Cube> Create(Cube cube)
     {
         float minCubeCount = 2;
         float maxCubeCount = 6;
-        float currentCubes = UnityEngine.Random.Range(minCubeCount, maxCubeCount + 1);
+        int currentCubes = Random.Range((int)minCubeCount, (int)maxCubeCount + 1);
 
-        List<Rigidbody> _newCubes = new List<Rigidbody>();
+        List<Cube> newCubes = new List<Cube>();
 
-        if (_initialCube.TryCreate(out Cube newCube))
+        float currentChance = cube.Chance;
+
+        if (cube.TryCreate())
         {
-            newCube.transform.localScale /= 2;
-            Renderer _cubeRenderer = newCube.Renderer;
+            cube.transform.localScale /= 2;
+            currentChance /= 2;
 
             for (int i = 0; i < currentCubes; i++)
             {
-                Cube spawnedCube = Instantiate(newCube, transform.position, Quaternion.identity);
-
-                float newChance = newCube.Chance / 2;
-                spawnedCube.Initialize(newChance);
-
-                Renderer cubeRenderer = spawnedCube.Renderer;
-                cubeRenderer.material = new Material(cubeRenderer.material);
-                cubeRenderer.material.color = GetRandomColor();
-
-                _newCubes.Add(spawnedCube.Rigidbody);
+                Cube spawnedCube = Instantiate(cube, cube.transform.position, Quaternion.identity);
+                spawnedCube.Initialize(currentChance);
+                newCubes.Add(spawnedCube);
             }
-
-            Created?.Invoke();
-            _fuse.Initialize(_newCubes);
         }
-    }
 
-    private Color GetRandomColor()
-    {
-        return new Color(
-            UnityEngine.Random.Range(0f, 1f),
-            UnityEngine.Random.Range(0f, 1f),
-            UnityEngine.Random.Range(0f, 1f)
-        );
+        return newCubes;
     }
 }
