@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Renderer))]
-
 public class Recolorer : MonoBehaviour
 {
     public void PaintCubes(List<Cube> cubes)

@@ -2,29 +2,44 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-
 public class Spawner : MonoBehaviour
 {
-    public List<Cube> Create(Cube cube)
-    {
-        float minCubeCount = 2;
-        float maxCubeCount = 6;
-        int currentCubes = Random.Range((int)minCubeCount, (int)maxCubeCount + 1);
+    [SerializeField] private Cube _initalCube;
+    [SerializeField] private Recolorer _recolorer;
 
+    private void OnEnable()
+    {
+        _initalCube.Ñracked += Create;
+    }
+
+    private void OnDisable()
+    {
+        _initalCube.Ñracked -= Create;
+    }
+
+    private void Create()
+    {
         List<Cube> newCubes = new List<Cube>();
 
-        float currentChance = cube.Chance;
+        float minCubeCount = 2;
+        float maxCubeCount = 6;
+        float currentCountCubes = UnityEngine.Random.Range(minCubeCount, maxCubeCount + 1);
 
-        cube.transform.localScale /= 2;
-        currentChance /= 2;
+        float coefficientSizeChange = 2;
+        _initalCube.transform.localScale /= coefficientSizeChange;
 
-        for (int i = 0; i < currentCubes; i++)
+        float currentChance = _initalCube.ChanceDisintegration;
+        float coefficientChanceChange = 2;
+        currentChance /= coefficientChanceChange;
+
+        for (int i = 0; i < currentCountCubes; i++)
         {
-            Cube spawnedCube = Instantiate(cube, cube.transform.position, Quaternion.identity);
+            Cube spawnedCube = Instantiate(_initalCube, _initalCube.transform.localPosition, Quaternion.identity);
             spawnedCube.Initialize(currentChance);
             newCubes.Add(spawnedCube);
+
         }
 
-        return newCubes;
+        _recolorer.PaintCubes(newCubes);
     }
 }

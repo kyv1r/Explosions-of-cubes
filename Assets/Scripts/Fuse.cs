@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-
 public class Fuse : MonoBehaviour
 {
     [SerializeField] private float _defoaltExplosionForce = 200;
@@ -10,16 +9,15 @@ public class Fuse : MonoBehaviour
 
     public void ExplodeCubes(Cube currentCube)
     {
-        float _newExplosionForce = _defoaltExplosionForce * (1 / currentCube.transform.localScale.x);
-        float _newExplosionRadius = _defoaltExplosionRadius * (1 / currentCube.transform.localScale.x);
+        float newExplosionForce = _defoaltExplosionForce * (1 / currentCube.transform.localScale.x);
+        float newExplosionRadius = _defoaltExplosionRadius * (1 / currentCube.transform.localScale.x);
 
         foreach (Rigidbody cube in GetExplodableCubes(currentCube))
-            cube.AddExplosionForce(_newExplosionForce, transform.position, _newExplosionRadius);
+            cube.AddExplosionForce(newExplosionForce, transform.position, newExplosionRadius);
     }
 
     private List<Rigidbody> GetExplodableCubes(Cube currentCube)
     {
-
         Collider[] hits = Physics.OverlapSphere(currentCube.transform.position, _defoaltExplosionRadius);
 
         List<Rigidbody> cubes = new();

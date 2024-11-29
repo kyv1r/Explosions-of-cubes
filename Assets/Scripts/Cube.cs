@@ -1,18 +1,22 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody), typeof(Renderer))]
-
 public class Cube : MonoBehaviour
 {
     [SerializeField] private InputManager _inputManager;
-    [SerializeField] private Spawner _spawner;
-    [SerializeField] private Recolorer _recolorer;
     [SerializeField] private Fuse _fuse;
+
+    private float _chanceDisintegration = 100;
+
+    public event Action Ñracked;
 
     public Renderer Renderer { get; private set; }
     public Rigidbody Rigidbody { get; private set; }
-    public float Chance = 100;
+    public float ChanceDisintegration { get { return _chanceDisintegration; } }
+
 
     private void Awake()
     {
@@ -20,44 +24,43 @@ public class Cube : MonoBehaviour
         Renderer = GetComponent<Renderer>();
     }
 
-    public void OnEnable()
+    private void OnEnable()
     {
         _inputManager.Clicked += CoordinateAction;
     }
 
-    public void OnDisable()
+    private void OnDisable()
     {
         _inputManager.Clicked -= CoordinateAction;
     }
 
-    public void CoordinateAction()
-    {
-        if (TryCreate() == false)
-        {
-            _fuse.ExplodeCubes(this);
-            Destroy(gameObject);
-            return;
-        }
-
-        List<Cube> newCubes = _spawner.Create(this);
-        _recolorer.PaintCubes(newCubes);
-        Destroy(gameObject);
-    }
-
     public void Initialize(float chance)
     {
-        Chance = chance;
+        _chanceDisintegration = chance;
     }
 
-    private bool TryCreate()
+    public bool CalculateChanceCreate()
     {
         float lowChance = 0;
         float highChance = 100;
         float chance = UnityEngine.Random.Range(lowChance, highChance);
 
-        if (chance <= Chance)
+        if (chance <= _chanceDisintegration)
             return true;
 
         return false;
+    }
+
+    private void CoordinateAction()
+    {
+        if (CalculateChanceCreate() == true)
+        {
+            Ñracked?.Invoke();
+            Destroy(gameObject);
+            return;
+        }
+
+        _fuse.ExplodeCubes(this);
+        Destroy(gameObject);
     }
 }
