@@ -43,13 +43,9 @@ public class Cube : MonoBehaviour
         float chance = UnityEngine.Random.Range(lowChance, highChance);
 
         if (chance <= _chanceDisintegration)
-        {
-            Debug.Log($"{chance} из {_chanceDisintegration}");
             return true;
-        }
 
-        Debug.Log($"{chance} из {_chanceDisintegration}");
-        return false;
+        return chance <= _chanceDisintegration;
     }
 
     private void CoordinateAction()
