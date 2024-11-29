@@ -7,6 +7,8 @@ public class Spawner : MonoBehaviour
     [SerializeField] private Cube _initalCube;
     [SerializeField] private Recolorer _recolorer;
 
+    private List<Cube> _newCubes = new List<Cube>();
+
     private void OnEnable()
     {
         _initalCube.Ñracked += Create;
@@ -15,9 +17,12 @@ public class Spawner : MonoBehaviour
     private void OnDisable()
     {
         _initalCube.Ñracked -= Create;
+
+        foreach (var cube in _newCubes)
+            cube.Ñracked -= Create;
     }
 
-    private void Create()
+    private void Create(Cube initalCube)
     {
         List<Cube> newCubes = new List<Cube>();
 
@@ -26,20 +31,21 @@ public class Spawner : MonoBehaviour
         float currentCountCubes = UnityEngine.Random.Range(minCubeCount, maxCubeCount + 1);
 
         float coefficientSizeChange = 2;
-        _initalCube.transform.localScale /= coefficientSizeChange;
+        initalCube.transform.localScale /= coefficientSizeChange;
 
-        float currentChance = _initalCube.ChanceDisintegration;
+        float currentChance = initalCube.ChanceDisintegration;
         float coefficientChanceChange = 2;
         currentChance /= coefficientChanceChange;
 
         for (int i = 0; i < currentCountCubes; i++)
         {
-            Cube spawnedCube = Instantiate(_initalCube, _initalCube.transform.localPosition, Quaternion.identity);
+            Cube spawnedCube = Instantiate(initalCube, initalCube.transform.localPosition, Quaternion.identity);
             spawnedCube.Initialize(currentChance);
+            spawnedCube.Ñracked += Create;
             newCubes.Add(spawnedCube);
-
         }
 
+        _newCubes.AddRange(newCubes);
         _recolorer.PaintCubes(newCubes);
     }
 }

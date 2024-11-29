@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody), typeof(Renderer))]
 public class Cube : MonoBehaviour
@@ -11,12 +9,11 @@ public class Cube : MonoBehaviour
 
     private float _chanceDisintegration = 100;
 
-    public event Action Ñracked;
+    public event Action<Cube> Ñracked;
 
     public Renderer Renderer { get; private set; }
     public Rigidbody Rigidbody { get; private set; }
     public float ChanceDisintegration { get { return _chanceDisintegration; } }
-
 
     private void Awake()
     {
@@ -39,15 +36,19 @@ public class Cube : MonoBehaviour
         _chanceDisintegration = chance;
     }
 
-    public bool CalculateChanceCreate()
+    private bool CalculateChanceCreate()
     {
         float lowChance = 0;
         float highChance = 100;
         float chance = UnityEngine.Random.Range(lowChance, highChance);
 
         if (chance <= _chanceDisintegration)
+        {
+            Debug.Log($"{chance} èç {_chanceDisintegration}");
             return true;
+        }
 
+        Debug.Log($"{chance} èç {_chanceDisintegration}");
         return false;
     }
 
@@ -55,7 +56,7 @@ public class Cube : MonoBehaviour
     {
         if (CalculateChanceCreate() == true)
         {
-            Ñracked?.Invoke();
+            Ñracked?.Invoke(this);
             Destroy(gameObject);
             return;
         }

@@ -7,9 +7,7 @@ public class Recolorer : MonoBehaviour
     public void PaintCubes(List<Cube> cubes)
     {
         foreach (Cube cube in cubes)
-        {
             cube.Renderer.material.color = GetRandomColor();
-        }
     }
 
     private Color GetRandomColor()
